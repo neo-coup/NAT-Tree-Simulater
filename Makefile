@@ -1,4 +1,4 @@
-built:
-	g++ -Wall main.cpp -o main
+build:
+	g++ -Wall main.cpp network.cpp -o main
 clean:
-	rm -f main
+	rm -f *.o *.gch main

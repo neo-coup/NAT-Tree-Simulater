@@ -1,6 +1,8 @@
-#include <iostream>
+#include "network.h"
 
 int main() {
-  std::cout << "Hello world!\n";
-  return 1;
+    Network network;
+    network.start();
+
+    return 1;
 }
