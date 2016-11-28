@@ -1,9 +1,16 @@
-#ifndef _NETWORK_H_
-#define _NETWORK_H_
+#ifndef __NETWORK_H__
+#define __NETWORK_H__
+
+#include "node.h"
+
+#define NODE_MAX 100
 
 class Network {
+    Node *node_list;
+
 public:
     Network() {};
-    void start();
+    void init();
+    void simulate();
 };
 #endif

@@ -2,7 +2,7 @@
 
 int main() {
     Network network;
-    network.start();
-
+    network.init();
+    network.simulate();
     return 1;
 }
