@@ -12,7 +12,7 @@ Node::Node()  {
 int Node::selectConnectionType() {
 
     std::random_device rnd;
-    int n = rnd() % 100;
+    int n = rnd() % 1000;
 
     if(n < TYPE_0) return  0;
     n -= TYPE_0;

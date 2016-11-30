@@ -1,12 +1,12 @@
 #ifndef __NODE_H__
 #define __NODE_H__
 
-#define TYPE_0 15
-#define TYPE_1 15
-#define TYPE_2 15
-#define TYPE_3 15
-#define TYPE_4 15
-#define TYPE_5 20
+#define TYPE_0 125   // Open Internet
+#define TYPE_1 125   // Full cone NAT
+#define TYPE_2 50    // Restricted cone NAT
+#define TYPE_3 400   // Port Restricted cone NAT
+#define TYPE_4 160   // Symmetric NAT
+#define TYPE_5 140   // UDP Blocked
 #define CHILDREN_MAX 2
 
 class Node
