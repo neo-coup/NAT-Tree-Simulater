@@ -7,10 +7,11 @@
 
 class Network {
     Node *node_list;
-
 public:
     Network() {};
     void init();
-    void simulate();
+    void buildTree();
+    void entryTree(Node* v);
+    void countNegativeNode();
 };
 #endif

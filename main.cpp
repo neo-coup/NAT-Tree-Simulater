@@ -3,6 +3,7 @@
 int main() {
     Network network;
     network.init();
-    network.simulate();
+    network.buildTree();
+    network.countNegativeNode();
     return 1;
 }

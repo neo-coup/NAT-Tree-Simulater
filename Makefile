@@ -1,4 +1,8 @@
+TARGET = main.cpp network.cpp node.cpp
+BandR:
+	g++ -Wall ${TARGET} -o main
+	./main
 build:
-	g++ -Wall main.cpp network.cpp node.cpp -o main
+	g++ -Wall ${TARGET} -o main
 clean:
 	rm -f *.o *.gch main
