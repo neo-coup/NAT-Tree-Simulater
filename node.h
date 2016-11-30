@@ -1,38 +1,34 @@
 #ifndef __NODE_H__
 #define __NODE_H__
 
-#include <stdlib.h>
-
-// #define TYPE0_RATIO
-// #define TYPE1_RATIO
-// #define TYPE2_RATIO
-// #define TYPE3_RATIO
-// #define TYPE4_RATIO
-// #define TYPE5_RATIO
+#define TYPE_0 15
+#define TYPE_1 15
+#define TYPE_2 15
+#define TYPE_3 15
+#define TYPE_4 15
+#define TYPE_5 20
 #define CHILDREN_MAX 2
 
 class Node
 {
  private:
      int id;
-     int connection_type;
      bool connect;
+     int connection_type;
 
  public:
      Node *parent;
      Node *children[CHILDREN_MAX];
 
-     Node() {
-         this->connect = false;
-         this->parent = NULL;
-         for(int i=0; i<CHILDREN_MAX; i++) this->children[i] = NULL;
-      };
+     Node();
      int getId() { return this->id; };
      void setId(int id) { this->id = id; };
+     void setConnect(bool connect) { this->connect = connect; };
+     bool getConnect() { return this->connect; };
      int getConnectionType() { return this->connection_type; };
      void setConnectionType(int connection_type) { this->connection_type = connection_type; }
-     void setConnect(bool connect) { this->connect = connect; };
-     bool isConnect() { return this->connect; };
+     int selectConnectionType();
+     bool canConnect(int);
 };
 
 #endif

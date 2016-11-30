@@ -15,13 +15,13 @@ void Network::init() {
     Node root;
     root.setId(0);
     root.setConnectionType(0);
+    root.setConnect(true);
     node_list[0] = root;
 
     // 全ノード追加
     for(int i=1; i<NODE_MAX; i++) {
         Node node;
         node.setId(i);
-        node.setConnectionType(0);
         node_list[i] = node;
     }
 
@@ -30,11 +30,9 @@ void Network::init() {
 
 void Network::buildTree() {
     for(int i=1; i<NODE_MAX; i++) {
-        cout << i << "times" << endl;
         Network::entryTree(&(node_list[i]));
     }
 
-    free(node_list);
     cout << "Tree Building has done!" << endl;
 }
 
@@ -50,12 +48,16 @@ void Network::entryTree(Node* v) {
         Node *p = queue.front();
         queue.pop();
         for(int i=0; i<CHILDREN_MAX; i++) {
+            // 子ノードの接続先がある場合
             if(p->children[i] == NULL) {
-                p->children[i] = v;
-                v->parent = p;
-                v->setConnect(true);
-                cout << "parent's ID is " << p->getId() << " The location is " << i << " I'm " << v->getId() << endl;
-                return;
+                // 接続可能な相性な場合
+                if(p->canConnect(v->getConnectionType())) {
+                    p->children[i] = v;
+                    v->parent = p;
+                    v->setConnect(true);
+                    cout << "parent's ID is " << p->getId() << " The location is " << i << " I'm " << v->getId() << endl;
+                    return;
+                }
             } else {
                 queue.push(p->children[i]);
             }
@@ -67,9 +69,10 @@ void Network::countNegativeNode() {
     int cnt = 0;
     for(int i=0; i<NODE_MAX; i++) {
         if(node_list[i].parent != NULL)
-            cout << node_list[i].getId() << "'s parent is " << node_list[i].parent->getId() << endl;
-        if(node_list[i].isConnect()) cnt++;
+            cout << node_list[i].getId() << "'s parent is " << node_list[i].parent->getId() << " My type is " << node_list[i].getConnectionType() << endl;
+        if(node_list[i].getConnect()) cnt++;
     }
 
+    free(node_list);
     cout << cnt << " nodes joined in the Tree." << endl;
 }
