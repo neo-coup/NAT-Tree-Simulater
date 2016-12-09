@@ -65,9 +65,29 @@ void Network::entryTree(Node* v) {
     }
 
     // 接続先がなかった場合、木の再構築により参加を試みる
-    // if(!v->getConnect()) searchRestrictedNode(v);
+    if(!v->getConnect()) searchRestrictedNode(v, &(node_list[0]));
     if(!v->getConnect()) searchChainOpenNode(v, &(node_list[0]));
     // if(!v->getConnect()) searchExtraPatternNode(v);
+}
+
+void Network::searchRestrictedNode(Node* v, Node* p) {
+    // 再帰処理の為、見つかっていた場合ここで処理終了
+    if(v->getConnect()) return;
+
+    // Restricted cone・Port Restricted cone 以外は検索終了
+    if(!(v->getConnectionType() == 2 || v->getConnectionType() == 3)) return;
+
+    // 親が Rest 系のノードだった場合、その子供との間に該当ノードを入れる
+    if(!(p->getConnectionType() == 2 || p->getConnectionType() == 3)) {
+        v->children[0] = p->children[0];
+        p->children[0]->parent = v;
+        p->children[0] = v;
+        v->parent = p;
+        v->setConnect(true);
+    }
+    for(int i=0; i<CHILDREN_MAX; i++) {
+        searchRestrictedNode(v, p->children[i]);
+    }
 }
 
 void Network::searchChainOpenNode(Node* v, Node* p) {
@@ -88,11 +108,6 @@ void Network::searchChainOpenNode(Node* v, Node* p) {
         }
         searchChainOpenNode(v, p->children[i]);
     }
-}
-
-void Network::searchRestrictedNode(Node* v) {
-    // Restricted cone・Port Restricted cone 以外は検索終了
-    if(!(v->getConnectionType() == 2 || v->getConnectionType() == 3)) return;
 }
 
 void Network::searchExtraPatternNode(Node* v) {
