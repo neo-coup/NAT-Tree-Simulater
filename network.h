@@ -11,7 +11,10 @@ public:
     Network() {};
     void init();
     void buildTree();
-    void entryTree(Node* v);
+    void entryTree(Node*);
+    void searchChainOpenNode(Node*, Node*);
+    void searchRestrictedNode(Node*);
+    void searchExtraPatternNode(Node*);
     void countNegativeNode();
 };
 #endif
