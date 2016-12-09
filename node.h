@@ -17,8 +17,8 @@ class Node
      int connection_type;
 
  public:
-     Node *parent;
-     Node *children[CHILDREN_MAX];
+     Node* parent;
+     Node* children[CHILDREN_MAX];
 
      Node();
      int getId() { return this->id; };

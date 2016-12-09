@@ -40,12 +40,12 @@ void Network::entryTree(Node* v) {
     queue<Node*> queue;
 
     // root ノードを queue に追加
-    Node *root = &(node_list[0]);
+    Node* root = &(node_list[0]);
     queue.push(root);
 
     // 幅優先探索で参加先を決定
     while( !queue.empty() ) {
-        Node *p = queue.front();
+        Node* p = queue.front();
         queue.pop();
         for(int i=0; i<CHILDREN_MAX; i++) {
             // 子ノードの接続先がある場合

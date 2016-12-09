@@ -6,7 +6,7 @@
 #define NODE_MAX 100
 
 class Network {
-    Node *node_list;
+    Node* node_list;
 public:
     Network() {};
     void init();
