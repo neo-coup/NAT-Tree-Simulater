@@ -3,12 +3,15 @@
 
 #include "node.h"
 
-#define NODE_MAX 100
-
 class Network {
-    Node* node_list;
 public:
-    Network() {};
+    bool extend;
+    bool chain;
+    bool restruct;
+    Node* node_list;
+    int node_max;
+
+    Network(bool, bool, int);
     void init();
     void buildTree();
     void entryTree(Node*);
@@ -17,4 +20,5 @@ public:
     void searchExtraPatternNode(Node*);
     void countNegativeNode();
 };
+
 #endif

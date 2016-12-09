@@ -28,7 +28,7 @@ class Node
      int getConnectionType() { return this->connection_type; };
      void setConnectionType(int connection_type) { this->connection_type = connection_type; }
      int selectConnectionType();
-     bool canConnect(int);
+     bool canConnect(int, bool);
 };
 
 #endif
