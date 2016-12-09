@@ -103,11 +103,11 @@ void Network::searchExtraPatternNode(Node* v) {
 void Network::countNegativeNode() {
     int cnt = 0;
     for(int i=0; i<NODE_MAX; i++) {
-        if(node_list[i].parent != NULL)
-            // cout << node_list[i].getId() << "'s parent is " << node_list[i].parent->getId() << " My type is " << node_list[i].getConnectionType() << endl;
+        // if(node_list[i].parent != NULL) cout << node_list[i].getId() << "'s parent is " << node_list[i].parent->getId() << " My type is " << node_list[i].getConnectionType() << endl;
         if(node_list[i].getConnect()) cnt++;
     }
 
     free(node_list);
     cout << cnt << " nodes joined in the Tree." << endl;
+    if(cnt == NODE_MAX) cout << "perfect !!!111" << endl;
 }
