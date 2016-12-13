@@ -17,7 +17,7 @@ public:
     void entryTree(Node*);
     void searchRestrictedNode(Node*, Node*);
     void searchChainOpenNode(Node*, Node*);
-    void searchExtraPatternNode(Node*);
+    void searchExtraPatternNode(Node*, Node*);
     void countNegativeNode();
 };
 

@@ -70,10 +70,12 @@ void Network::entryTree(Node* v) {
         }
     }
 
-    // 接続先が無かった場合、木の再構築により参加を試みる
+    // 接続先が無かった場合、木の再構築を行い参加を試みる
     if(this->restruct) searchRestrictedNode(v, &(node_list[0]));
     if(this->restruct) searchChainOpenNode(v, &(node_list[0]));
-    // if(this->restruct && !v->getConnect()) searchExtraPatternNode(v);
+    if(this->restruct) searchExtraPatternNode(v, &(node_list[0]));
+
+    // if(!v->getConnect()) cout << v->getId() << " failed to join." << endl;
 }
 
 void Network::searchRestrictedNode(Node* v, Node* p) {
@@ -109,7 +111,7 @@ void Network::searchChainOpenNode(Node* v, Node* p) {
 
         // 親子共に Open Internet 又は Full cone だった場合、その間に該当ノードを入れる
         if(p->getConnectionType() <= 1 && p->children[i]->getConnectionType() <= 1) {
-            cout << "\nDetect Chain >>> v:" << v->getId() << " - " << v->getConnectionType() << " p:" << p->getId() << " - " << p->getConnectionType() << " c:" << p->children[i]->getId() << " - " <<p->children[i]->getConnectionType() << "\n" << endl;
+            // cout << "\nDetect Chain >>> v:" << v->getId() << " - " << v->getConnectionType() << " p:" << p->getId() << " - " << p->getConnectionType() << " c:" << p->children[i]->getId() << " - " <<p->children[i]->getConnectionType() << "\n" << endl;
             v->children[0] = p->children[i];
             p->children[i]->parent = v;
             p->children[i] = v;
@@ -121,9 +123,50 @@ void Network::searchChainOpenNode(Node* v, Node* p) {
     }
 }
 
-void Network::searchExtraPatternNode(Node* v) {
-    // Symmetric・UDP Blocked 以外は検索終了
+/**
+* ExtraPattern
+* 参加者           Symmetric・UDP Blocked
+* 親ノード          Open Internet・Full cone
+* 交換先ノード       Restricted cone・Port Restricted cone
+* 子ノード           Open Internet・Full cone
+* 上記条件が全て揃っていた場合、参加者と交換先を入れ替え、交換先ノードの追加先を再検索
+*/
+void Network::searchExtraPatternNode(Node* v, Node* d) {
+    // 再帰処理の為、見つかっていた場合ここで処理終了
+    if(v->getConnect()) return;
+
+    // 参加者が Symmetric・UDP Blocked 以外は検索終了
     if(!(v->getConnectionType() == 4 || v->getConnectionType() == 5)) return;
+
+    Node* p = d->parent;
+
+    // 交換先が Restricted・Port Restricted 以外
+    if(!(d->getConnectionType() == 2 || d->getConnectionType() == 3)) {}
+
+    // 親が Open Internet・Full cone 以外
+    else if(!(p->getConnectionType() == 0 || p->getConnectionType() == 1)) {}
+
+    else {
+        for(int i=0; i<CHILDREN_MAX; i++) {
+            Node* c = d->children[i];
+            if(!(c->getConnectionType() == 0 || c->getConnectionType() == 1)) {
+                cout << "\nDetect Extra >>> v:" << v->getId() << " - " << v->getConnectionType() << " d:" << d->getId() << " - " << d->getConnectionType() << endl;
+                v->parent = d->parent;
+                d->parent = NULL;
+                for(int i=0; i<CHILDREN_MAX; i++) {
+                    v->children[i] = c->children[i];
+                    c->children[i] = NULL;
+                }
+                v->setConnect(true);
+                d->setConnect(false);
+
+                searchRestrictedNode(d, &node_list[0]);
+            }
+        }
+    }
+    for(int i=0; i<CHILDREN_MAX; i++) {
+        searchRestrictedNode(v, d->children[i]);
+    }
 }
 
 void Network::countNegativeNode() {
@@ -136,6 +179,6 @@ void Network::countNegativeNode() {
     }
 
     free(node_list);
-    cout << cnt << " nodes joined in the Tree." << endl;
+    cout << cnt << " of " << this->node_max << " nodes joined in the Tree." << endl;
     if(cnt == this->node_max) cout << "perfect !!!111" << endl;
 }
