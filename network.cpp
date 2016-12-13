@@ -86,9 +86,9 @@ void Network::searchRestrictedNode(Node* v, Node* p) {
     // Restricted cone・Port Restricted cone 以外は検索終了
     if(!(v->getConnectionType() == 2 || v->getConnectionType() == 3)) return;
 
-    // 親が Rest 系のノードだった場合、その子供との間に該当ノードを入れる
+    // 親が Restricted cone 又は、Port Restricted cone だった場合、その子供との間に該当ノードを入れる
     if(!(p->getConnectionType() == 2 || p->getConnectionType() == 3)) {
-        cout << "\nDetect RestRest >>> v:" << v->getId() << " p:" << p->getId() << " c:" << p->children[0]->getId() << "\n" << endl;
+        // cout << "\nDetect RestRest >>> v:" << v->getId() << " p:" << p->getId() << " c:" << p->children[0]->getId() << "\n" << endl;
         v->children[0] = p->children[0];
         p->children[0]->parent = v;
         p->children[0] = v;
@@ -107,7 +107,7 @@ void Network::searchChainOpenNode(Node* v, Node* p) {
     for(int i=0; i<CHILDREN_MAX; i++) {
         if(p->children[i] == NULL) break;
 
-        // 親子共にオープンなノードだった場合、その間に該当ノードを入れる
+        // 親子共に Open Internet 又は Full cone だった場合、その間に該当ノードを入れる
         if(p->getConnectionType() <= 1 && p->children[i]->getConnectionType() <= 1) {
             cout << "\nDetect Chain >>> v:" << v->getId() << " - " << v->getConnectionType() << " p:" << p->getId() << " - " << p->getConnectionType() << " c:" << p->children[i]->getId() << " - " <<p->children[i]->getConnectionType() << "\n" << endl;
             v->children[0] = p->children[i];
