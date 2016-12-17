@@ -6,10 +6,14 @@
 
 using namespace std;
 
-Network::Network(bool e, bool r, int n) {
+Network::Network(bool d, bool e, bool r, int n) {
+    this->debug = d;
     this->extend = e;
     this->restruct = r;
     this->node_max = n;
+    this->cnt_r = 0;
+    this->cnt_o = 0;
+    this->cnt_e = 0;
 }
 
 void Network::init() {
@@ -30,8 +34,8 @@ void Network::init() {
         node.setId(i);
         node_list[i] = node;
     }
-
-    cout << "Initializing has done!" << endl;
+    if(this->debug) printf("nodes:%d, extend:%d, restruct:%d", this->node_max, this->extend, this->restruct);
+    cout << "\nInitializing has done!\n" << endl;
 };
 
 void Network::buildTree() {
@@ -39,7 +43,7 @@ void Network::buildTree() {
         Network::entryTree(&(node_list[i]));
     }
 
-    cout << "Tree Building has done!" << endl;
+    cout << "\nTree Building has done!\n" << endl;
 }
 
 void Network::entryTree(Node* v) {
@@ -61,7 +65,7 @@ void Network::entryTree(Node* v) {
                     p->children[i] = v;
                     v->parent = p;
                     v->setConnect(true);
-                    // cout << "I'm " << v->getId() << " My Type is " << v->getConnectionType() << " parent's ID is " << p->getId() << " The location is " << i << endl;
+                    if(this->debug) printf("I'm %5d.     My Type is %d.     My parent's ID is %5d.     The location is %d.\n", v->getId(), v->getConnectionType(), p->getId(), i);
                     return;
                 }
             } else {
@@ -75,7 +79,7 @@ void Network::entryTree(Node* v) {
     if(this->restruct) searchChainOpenNode(v, &(node_list[0]));
     if(this->restruct) searchExtraPatternNode(v, &(node_list[0]));
 
-    // if(!v->getConnect()) cout << v->getId() << " failed to join." << endl;
+    if(this->debug) if(!v->getConnect()) printf("%d failed to join.\n", v->getId());
 }
 
 void Network::searchRestrictedNode(Node* v, Node* p) {
@@ -90,12 +94,13 @@ void Network::searchRestrictedNode(Node* v, Node* p) {
 
     // 親が Restricted cone 又は、Port Restricted cone だった場合、その子供との間に該当ノードを入れる
     if(!(p->getConnectionType() == 2 || p->getConnectionType() == 3)) {
-        // cout << "\nDetect RestRest >>> v:" << v->getId() << " p:" << p->getId() << " c:" << p->children[0]->getId() << "\n" << endl;
+        if(this->debug) printf("Detect RestRest >>> v:%5d     p:%5d     c:%5d\n", v->getId(), p->getId(), p->children[0]->getId());
         v->children[0] = p->children[0];
         p->children[0]->parent = v;
         p->children[0] = v;
         v->parent = p;
         v->setConnect(true);
+        this->cnt_r++;
     }
     for(int i=0; i<CHILDREN_MAX; i++) {
         searchRestrictedNode(v, p->children[i]);
@@ -111,12 +116,13 @@ void Network::searchChainOpenNode(Node* v, Node* p) {
 
         // 親子共に Open Internet 又は Full cone だった場合、その間に該当ノードを入れる
         if(p->getConnectionType() <= 1 && p->children[i]->getConnectionType() <= 1) {
-            // cout << "\nDetect Chain >>> v:" << v->getId() << " - " << v->getConnectionType() << " p:" << p->getId() << " - " << p->getConnectionType() << " c:" << p->children[i]->getId() << " - " <<p->children[i]->getConnectionType() << "\n" << endl;
+            if(this->debug) printf("Detect Chain >>> v:%5d     p:%5d     c:%5d\n", v->getId(), p->getId(), p->children[i]->getId());
             v->children[0] = p->children[i];
             p->children[i]->parent = v;
             p->children[i] = v;
             v->parent = p;
             v->setConnect(true);
+            this->cnt_o++;
             break;
         }
         searchChainOpenNode(v, p->children[i]);
@@ -150,7 +156,7 @@ void Network::searchExtraPatternNode(Node* v, Node* d) {
         for(int i=0; i<CHILDREN_MAX; i++) {
             Node* c = d->children[i];
             if(!(c->getConnectionType() == 0 || c->getConnectionType() == 1)) {
-                cout << "\nDetect Extra >>> v:" << v->getId() << " - " << v->getConnectionType() << " d:" << d->getId() << " - " << d->getConnectionType() << endl;
+                if(this->debug) printf("Detect Extra >>> v:%5d     d:%5d     p:%5d\n", v->getId(), d->getId(), p->getId());
                 v->parent = d->parent;
                 d->parent = NULL;
                 for(int i=0; i<CHILDREN_MAX; i++) {
@@ -159,6 +165,7 @@ void Network::searchExtraPatternNode(Node* v, Node* d) {
                 }
                 v->setConnect(true);
                 d->setConnect(false);
+                this->cnt_e++;
 
                 searchRestrictedNode(d, &node_list[0]);
             }
@@ -169,16 +176,19 @@ void Network::searchExtraPatternNode(Node* v, Node* d) {
     }
 }
 
-void Network::countNegativeNode() {
+void Network::showResult() {
     int cnt = 0;
+
     for(int i=0; i<this->node_max; i++) {
-        // if(node_list[i].parent != NULL) cout << node_list[i].getId() << "'s parent is " << node_list[i].parent->getId() << " My type is " << node_list[i].getConnectionType() << endl;
-        // cout << "I'm " << node_list[i].getId() << " My type is " << node_list[i].getConnectionType() << endl;
+        if(this->debug) {
+            if(node_list[i].parent != NULL ) printf("I'm %5d.     My type is %d.     My parent is %5d\n", node_list[i].getId(), node_list[i].getConnectionType(), node_list[i].parent->getId());
+            else  printf("I'm %5d.     My type is %d.     I have no parent.\n", node_list[i].getId(), node_list[i].getConnectionType());
+        }
         if(node_list[i].getConnect()) cnt++;
-        // else cout << "I'm alone!!!" << endl;
     }
 
     free(node_list);
+    if(this->debug) printf("\nRESTRUCTION >>> R:%2d O:%2d E:%2d\n", this->cnt_r, this->cnt_o, this->cnt_e);
     cout << cnt << " of " << this->node_max << " nodes joined in the Tree." << endl;
     if(cnt == this->node_max) cout << "perfect !!!111" << endl;
 }

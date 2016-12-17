@@ -8,9 +8,9 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    Network network(option.getExtend(), option.getRestruct(), option.getNodeNum());
+    Network network(option.getDebug(), option.getExtend(), option.getRestruct(), option.getNodeNum());
     network.init();
     network.buildTree();
-    network.countNegativeNode();
+    network.showResult();
     return 1;
 }
