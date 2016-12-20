@@ -11,12 +11,20 @@ public:
     bool restruct;
     Node* node_list;
     int node_max;
-    int cnt_r, cnt_o, cnt_e;
+
+    struct count_restruct {
+        int r;
+        int o;
+        int e;
+    };
+
+    struct count_restruct cnt;
 
     Network(bool, bool, bool, int);
     void init();
     void buildTree();
     void entryTree(Node*);
+    bool canConnect(int, int);
     void searchRestrictedNode(Node*, Node*);
     void searchChainOpenNode(Node*, Node*);
     void searchExtraPatternNode(Node*, Node*);

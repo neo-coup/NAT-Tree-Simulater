@@ -28,12 +28,3 @@ int Node::selectConnectionType() {
     // n -= TYPE_5;
     return 0;
 };
-
-bool Node::canConnect(int opp, bool ext) {
-    bool ret = false;
-    int a = this->getConnectionType();
-    int b = opp;
-    if(a <= 1 || b <= 1) ret = true;
-    if(a <= 3 && b <= 3 && ext) ret = true;
-    return ret;
-}

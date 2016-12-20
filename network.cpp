@@ -11,9 +11,9 @@ Network::Network(bool d, bool e, bool r, int n) {
     this->extend = e;
     this->restruct = r;
     this->node_max = n;
-    this->cnt_r = 0;
-    this->cnt_o = 0;
-    this->cnt_e = 0;
+    this->cnt.r = 0;
+    this->cnt.o = 0;
+    this->cnt.e = 0;
 }
 
 void Network::init() {
@@ -61,7 +61,7 @@ void Network::entryTree(Node* v) {
             // 子ノードの接続先がある場合
             if(p->children[i] == NULL) {
                 // 接続可能な相性な場合
-                if(p->canConnect(v->getConnectionType(), this->extend)) {
+                if(canConnect(v->getConnectionType(), p->getConnectionType())) {
                     p->children[i] = v;
                     v->parent = p;
                     v->setConnect(true);
@@ -82,6 +82,20 @@ void Network::entryTree(Node* v) {
     if(this->debug) if(!v->getConnect()) printf("%d failed to join.\n", v->getId());
 }
 
+/**
+*canConnect
+*c: child  子となるノード
+*p: parent 親となるノード
+*/
+
+bool Network::canConnect(int c, int p) {
+    bool ret = false;
+    if(c <= 1 || p <= 1) ret = true;
+    if(c <= 3 && p <= 3 && this->extend) ret = true;
+
+    return ret;
+}
+
 void Network::searchRestrictedNode(Node* v, Node* p) {
     // 再帰処理の為、見つかっていた場合ここで処理終了
     if(v->getConnect()) return;
@@ -100,7 +114,7 @@ void Network::searchRestrictedNode(Node* v, Node* p) {
         p->children[0] = v;
         v->parent = p;
         v->setConnect(true);
-        this->cnt_r++;
+        this->cnt.r++;
     }
     for(int i=0; i<CHILDREN_MAX; i++) {
         searchRestrictedNode(v, p->children[i]);
@@ -122,7 +136,7 @@ void Network::searchChainOpenNode(Node* v, Node* p) {
             p->children[i] = v;
             v->parent = p;
             v->setConnect(true);
-            this->cnt_o++;
+            this->cnt.o++;
             break;
         }
         searchChainOpenNode(v, p->children[i]);
@@ -165,7 +179,7 @@ void Network::searchExtraPatternNode(Node* v, Node* d) {
                 }
                 v->setConnect(true);
                 d->setConnect(false);
-                this->cnt_e++;
+                this->cnt.e++;
 
                 searchRestrictedNode(d, &node_list[0]);
             }
@@ -188,7 +202,7 @@ void Network::showResult() {
     }
 
     free(node_list);
-    if(this->debug) printf("\nRESTRUCTION >>> R:%2d O:%2d E:%2d\n", this->cnt_r, this->cnt_o, this->cnt_e);
+    if(this->restruct) cout << "\nRESTRUCTION >>> R:" << this->cnt.r << " O:" <<  this->cnt.o << " E:" << this->cnt.e << endl;
     cout << cnt << " of " << this->node_max << " nodes joined in the Tree." << endl;
     if(cnt == this->node_max) cout << "perfect !!!111" << endl;
 }
