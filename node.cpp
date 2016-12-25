@@ -7,12 +7,13 @@ Node::Node()  {
     this->parent = NULL;
     for(int i=0; i<CHILDREN_MAX; i++) this->children[i] = NULL;
     this->connection_type = selectConnectionType();
+    this->mobile = setIsMobile();
  };
 
 int Node::selectConnectionType() {
 
     std::random_device rnd;
-    // 小数点第一位まで残し、パーセント単位計算
+    // 小数点第一位まで残し、パーセント単位で計算
     double n = (rnd() % 1000) / 10;
 
     if(n < TYPE_0) return  0;
@@ -29,3 +30,15 @@ int Node::selectConnectionType() {
     // n -= TYPE_5;
     return 0;
 };
+
+bool Node::setIsMobile() {
+    bool ret = false;
+
+    std::random_device rnd;
+    double n = rnd() % 100;
+
+    // グローバルなモバイルは存在しない
+    ret = (this->getConnectionType() != 0) && (n < MOBILE_RATIO);
+
+    return ret;
+}

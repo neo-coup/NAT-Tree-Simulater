@@ -12,19 +12,21 @@ public:
     Node* node_list;
     int node_max;
 
-    struct count_restruct {
-        int r;
-        int o;
-        int e;
+    struct count {
+        int s;  // snatchMobileLocate
+        int r;  // searchRestrictedNode
+        int o;  // searchChainOpenNode
+        int e;  // searchExtraPatternNode
     };
 
-    struct count_restruct cnt;
+    struct count cnt;
 
     Network(bool, bool, bool, int);
     void init();
     void buildTree();
     void entryTree(Node*);
     bool canConnect(Node*, Node*);
+    void snatchMobileLocate(Node*, Node*);
     void searchRestrictedNode(Node*, Node*);
     void searchChainOpenNode(Node*, Node*);
     void searchExtraPatternNode(Node*, Node*);

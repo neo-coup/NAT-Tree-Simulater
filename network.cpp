@@ -11,6 +11,7 @@ Network::Network(bool d, bool e, bool r, int n) {
     this->extend = e;
     this->restruct = r;
     this->node_max = n;
+    this->cnt.s = 0;
     this->cnt.r = 0;
     this->cnt.o = 0;
     this->cnt.e = 0;
@@ -25,6 +26,7 @@ void Network::init() {
     Node root;
     root.setId(0);
     root.setConnectionType(0);
+    root.setMobile(false);
     root.setConnect(true);
     node_list[0] = root;
 
@@ -64,8 +66,9 @@ void Network::entryTree(Node* v) {
                 if(canConnect(v, p)) {
                     p->children[i] = v;
                     v->parent = p;
+                    v->setLocate(i);
                     v->setConnect(true);
-                    if(this->debug) printf("I'm %5d.     My Type is %d.     My parent's ID is %5d.     The location is %d.\n", v->getId(), v->getConnectionType(), p->getId(), i);
+                    if(this->debug) printf("I'm %5d.     My Type is %d. And mobile is %d    My parent's ID is %5d.     The location is %d.\n", v->getId(), v->getConnectionType(), v->getMobile(), p->getId(), i);
                     return;
                 }
             } else {
@@ -78,6 +81,7 @@ void Network::entryTree(Node* v) {
     if(this->restruct) searchRestrictedNode(v, &(node_list[0]));
     if(this->restruct) searchChainOpenNode(v, &(node_list[0]));
     if(this->restruct) searchExtraPatternNode(v, &(node_list[0]));
+    if(this->restruct) snatchMobileLocate(v, &(node_list[0]));
 
     if(this->debug) if(!v->getConnect()) printf("%d failed to join.\n", v->getId());
 }
@@ -90,10 +94,43 @@ void Network::entryTree(Node* v) {
 
 bool Network::canConnect(Node* c, Node* p) {
     bool ret = false;
-    if(c->getConnectionType() <= 1 || p->getConnectionType() <= 1) ret = true;
-    if(c->getConnectionType() <= 3 && p->getConnectionType() <= 3 && this->extend) ret = true;
+
+    if(p->getMobile()) ret = false;
+    else if(c->getConnectionType() <= 1 || p->getConnectionType() <= 1) ret = true;
+    else if(c->getConnectionType() <= 3 && p->getConnectionType() <= 3 && this->extend) ret = true;
 
     return ret;
+}
+
+void Network::snatchMobileLocate(Node* v, Node* d) {
+    // 再帰処理の為、見つかっていた場合ここで処理終了
+    if(v->getConnect()) return;
+
+    // 参加者が Mobie 又は、交換先が不参加なら検索終了
+    if(v->getMobile() || !d->getConnect()) return;
+
+    // 交換先が Mobile 且つ、交換先の親ノードと接続可能
+    if(d->getMobile() &&  canConnect(v, d->parent)) {
+        if(this->debug) printf("Detect Snatch   >>> v:%5d     d:%5d\n", v->getId(), d->getId());
+        Node* p = d->parent;
+
+        p->children[d->getLocate()] = v;
+        v->parent = p;
+        // for(int i=0; i<CHILDREN_MAX; i++) v->children[i] = d->children[i];
+        v->setLocate(d->getLocate());
+        v->setConnect(true);
+        d->setConnect(false);
+        this->cnt.s++;
+
+        // 追加先再検索
+        entryTree(d);
+    } else {
+        for(int i=0; i<CHILDREN_MAX; i++) {
+            if(d->children[i] != NULL) {
+                snatchMobileLocate(v, d->children[i]);
+            }
+        }
+    }
 }
 
 void Network::searchRestrictedNode(Node* v, Node* p) {
@@ -103,22 +140,27 @@ void Network::searchRestrictedNode(Node* v, Node* p) {
     // option で拡張されていなければ終了
     if(!this->extend) return;
 
+    // 参加者が Mobie なら検索終了
+    if(v->getMobile()) return;
+
     // Restricted cone・Port Restricted cone 以外は検索終了
     if(!(v->getConnectionType() == 2 || v->getConnectionType() == 3)) return;
 
     // 親が Restricted cone 又は、Port Restricted cone だった場合、その子供との間に該当ノードを入れる
-    if(!(p->getConnectionType() == 2 || p->getConnectionType() == 3)) {
+    if((p->getConnectionType() == 2 || p->getConnectionType() == 3) && canConnect(v, p)) {
         if(this->debug) printf("Detect RestRest >>> v:%5d     p:%5d     c:%5d\n", v->getId(), p->getId(), p->children[0]->getId());
         v->children[0] = p->children[0];
         p->children[0]->parent = v;
         p->children[0] = v;
         v->parent = p;
+        v->setLocate(0);
         v->setConnect(true);
         this->cnt.r++;
-    }
-    for(int i=0; i<CHILDREN_MAX; i++) {
-        if(p->children[i] != NULL) {
-            searchRestrictedNode(v, p->children[i]);
+    } else {
+        for(int i=0; i<CHILDREN_MAX; i++) {
+            if(p->children[i] != NULL) {
+                searchRestrictedNode(v, p->children[i]);
+            }
         }
     }
 }
@@ -127,16 +169,20 @@ void Network::searchChainOpenNode(Node* v, Node* p) {
     // 再帰処理の為、見つかっていた場合ここで処理終了
     if(v->getConnect()) return;
 
+    // 参加者が Mobile なら検索終了
+    if(v->getMobile()) return;
+
     for(int i=0; i<CHILDREN_MAX; i++) {
         if(p->children[i] == NULL) break;
 
         // 親子共に Open Internet 又は Full cone だった場合、その間に該当ノードを入れる
         if(p->getConnectionType() <= 1 && p->children[i]->getConnectionType() <= 1) {
-            if(this->debug) printf("Detect Chain >>> v:%5d     p:%5d     c:%5d\n", v->getId(), p->getId(), p->children[i]->getId());
+            if(this->debug) printf("Detect Chain    >>> v:%5d     p:%5d     c:%5d\n", v->getId(), p->getId(), p->children[i]->getId());
             v->children[0] = p->children[i];
             p->children[i]->parent = v;
             p->children[i] = v;
             v->parent = p;
+            v->setLocate(0);
             v->setConnect(true);
             this->cnt.o++;
             break;
@@ -157,6 +203,9 @@ void Network::searchExtraPatternNode(Node* v, Node* d) {
     // 再帰処理の為、見つかっていた場合ここで処理終了
     if(v->getConnect()) return;
 
+    // 参加者が Mobie 又は、交換先が不参加なら検索終了
+    if(v->getMobile() || !d->getConnect()) return;
+
     // 参加者が Symmetric・UDP Blocked 以外は検索終了
     if(!(v->getConnectionType() == 4 || v->getConnectionType() == 5)) return;
 
@@ -172,13 +221,14 @@ void Network::searchExtraPatternNode(Node* v, Node* d) {
         for(int i=0; i<CHILDREN_MAX; i++) {
             Node* c = d->children[i];
             if(!(c->getConnectionType() == 0 || c->getConnectionType() == 1)) {
-                if(this->debug) printf("Detect Extra >>> v:%5d     d:%5d     p:%5d\n", v->getId(), d->getId(), p->getId());
+                if(this->debug) printf("Detect Extra    >>> v:%5d     d:%5d     p:%5d\n", v->getId(), d->getId(), p->getId());
                 v->parent = d->parent;
                 d->parent = NULL;
                 for(int i=0; i<CHILDREN_MAX; i++) {
                     v->children[i] = c->children[i];
                     c->children[i] = NULL;
                 }
+                v->setLocate(d->getLocate());
                 v->setConnect(true);
                 d->setConnect(false);
                 this->cnt.e++;
@@ -199,14 +249,14 @@ void Network::showResult() {
 
     for(int i=0; i<this->node_max; i++) {
         if(this->debug) {
-            if(node_list[i].parent != NULL ) printf("I'm %5d.     My type is %d.     My parent is %5d\n", node_list[i].getId(), node_list[i].getConnectionType(), node_list[i].parent->getId());
-            else  printf("I'm %5d.     My type is %d.     I have no parent.\n", node_list[i].getId(), node_list[i].getConnectionType());
+            if(node_list[i].parent != NULL ) printf("I'm %5d.     My type is %d. And mobile is %d    My parent is %5d\n", node_list[i].getId(), node_list[i].getConnectionType(), node_list[i].getMobile(), node_list[i].parent->getId());
+            else  printf("I'm %5d.     My type is %d. And mobile is %d     I have no parent.\n", node_list[i].getId(), node_list[i].getConnectionType(), node_list[i].getMobile());
         }
         if(node_list[i].getConnect()) cnt++;
     }
 
     free(node_list);
-    if(this->restruct) cout << "\nRESTRUCTION >>> R:" << this->cnt.r << " O:" <<  this->cnt.o << " E:" << this->cnt.e << endl;
+    if(this->restruct) cout << "\nRESTRUCTION >>> R:" << this->cnt.r << " O:" <<  this->cnt.o << " E:" << this->cnt.e << " S:" << this->cnt.s << endl;
     cout << cnt << " of " << this->node_max << " nodes joined in the Tree." << endl;
     if(cnt == this->node_max) cout << "perfect !!!111" << endl;
 }
