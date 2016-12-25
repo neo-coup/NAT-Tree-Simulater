@@ -61,7 +61,7 @@ void Network::entryTree(Node* v) {
             // 子ノードの接続先がある場合
             if(p->children[i] == NULL) {
                 // 接続可能な相性な場合
-                if(canConnect(v->getConnectionType(), p->getConnectionType())) {
+                if(canConnect(v, p)) {
                     p->children[i] = v;
                     v->parent = p;
                     v->setConnect(true);
@@ -88,10 +88,10 @@ void Network::entryTree(Node* v) {
 *p: parent 親となるノード
 */
 
-bool Network::canConnect(int c, int p) {
+bool Network::canConnect(Node* c, Node* p) {
     bool ret = false;
-    if(c <= 1 || p <= 1) ret = true;
-    if(c <= 3 && p <= 3 && this->extend) ret = true;
+    if(c->getConnectionType() <= 1 || p->getConnectionType() <= 1) ret = true;
+    if(c->getConnectionType() <= 3 && p->getConnectionType() <= 3 && this->extend) ret = true;
 
     return ret;
 }

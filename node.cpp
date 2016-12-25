@@ -12,7 +12,8 @@ Node::Node()  {
 int Node::selectConnectionType() {
 
     std::random_device rnd;
-    int n = rnd() % 1000;
+    // 小数点第一位まで残し、パーセント単位計算
+    double n = (rnd() % 1000) / 10;
 
     if(n < TYPE_0) return  0;
     n -= TYPE_0;

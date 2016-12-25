@@ -1,13 +1,14 @@
 #ifndef __NODE_H__
 #define __NODE_H__
 
-#define TYPE_0 125   // Open Internet
-#define TYPE_1 125   // Full cone NAT
-#define TYPE_2 50    // Restricted cone NAT
-#define TYPE_3 400   // Port Restricted cone NAT
-#define TYPE_4 160   // Symmetric NAT
-#define TYPE_5 140   // UDP Blocked
 #define CHILDREN_MAX 2
+
+const double TYPE_0 = 12.5;   // Open Internet
+const double TYPE_1 = 12.5;   // Full cone NAT
+const double TYPE_2 = 5.0;    // Restricted cone NAT
+const double TYPE_3 = 40.0;   // Port Restricted cone NAT
+const double TYPE_4 = 16.0;   // Symmetric NAT
+const double TYPE_5 = 14.0;   // UDP Blocked
 
 class Node
 {

@@ -24,7 +24,7 @@ public:
     void init();
     void buildTree();
     void entryTree(Node*);
-    bool canConnect(int, int);
+    bool canConnect(Node*, Node*);
     void searchRestrictedNode(Node*, Node*);
     void searchChainOpenNode(Node*, Node*);
     void searchExtraPatternNode(Node*, Node*);
