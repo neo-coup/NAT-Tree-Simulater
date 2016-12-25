@@ -117,7 +117,9 @@ void Network::searchRestrictedNode(Node* v, Node* p) {
         this->cnt.r++;
     }
     for(int i=0; i<CHILDREN_MAX; i++) {
-        searchRestrictedNode(v, p->children[i]);
+        if(p->children[i] != NULL) {
+            searchRestrictedNode(v, p->children[i]);
+        }
     }
 }
 
@@ -186,7 +188,9 @@ void Network::searchExtraPatternNode(Node* v, Node* d) {
         }
     }
     for(int i=0; i<CHILDREN_MAX; i++) {
-        searchRestrictedNode(v, d->children[i]);
+        if(d->children[i] != NULL) {
+            searchRestrictedNode(v, d->children[i]);
+        }
     }
 }
 
