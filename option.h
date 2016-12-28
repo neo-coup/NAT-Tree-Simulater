@@ -9,7 +9,6 @@ class Option {
     char** argv;
     bool debug = false;
     bool extend = false;    // 拡張フラグ
-    bool restruct = false;  // 再構築フラグ
     int node_num = 100;   // ノード数
     // int child_num = 2;  // ノードの持てる子ノードの数
 
@@ -19,7 +18,6 @@ class Option {
     void showHelp();
     bool getDebug() { return this->debug; };
     bool getExtend() { return this->extend; };
-    bool getRestruct() { return this->restruct; };
     int getNodeNum() { return this->node_num; };
     // int getChildNum() { return this->child_num };
 };

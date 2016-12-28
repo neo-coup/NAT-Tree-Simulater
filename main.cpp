@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    Network network(option.getDebug(), option.getExtend(), option.getRestruct(), option.getNodeNum());
+    Network network(option.getDebug(), option.getExtend(), option.getNodeNum());
     network.init();
     network.buildTree();
     network.showResult();

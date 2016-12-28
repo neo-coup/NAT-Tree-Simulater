@@ -16,7 +16,6 @@ bool Option::checkFormat() {
     regex help("-h|--help");
     regex debug("-d|--debug");
     regex ext("-e|--extend");
-    regex rest("-r|--restruct");
     regex node("-n");
     // regex ch("-c");
     regex fig("\\d+");
@@ -28,8 +27,6 @@ bool Option::checkFormat() {
             this->debug = true;
         } else if(regex_match(argv[i], ext)) {
             this->extend = true;
-        } else if(regex_match(argv[i], rest)) {
-            this->restruct = true;
         } else if(regex_match(argv[i], node)) {
             if(i+1 < argc && regex_match(argv[i+1], fig)) {
                 this->node_num = atoi(argv[++i]);
@@ -57,7 +54,6 @@ void Option::showHelp() {
     cout << " -h, --help                show this help  " << endl;
     cout << " -d, --debug               show debug      " << endl;
     cout << " -e, --extend              extend NAT's combinaton table" << endl;
-    cout << " -r, --restruct            restruct Tree   " << endl;
     cout << " -n                <num>   number of nodes " << endl;
     // cout << " -c                <num>   number of child limit" << endl;
     cout << endl;
