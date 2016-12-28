@@ -7,16 +7,12 @@ class Network {
 public:
     bool debug;
     bool extend;
-    bool chain;
     bool restruct;
     Node* node_list;
     int node_max;
 
     struct count {
         int s;  // snatchMobileLocate
-        int r;  // searchRestrictedNode
-        int o;  // searchChainOpenNode
-        int e;  // searchExtraPatternNode
     };
 
     struct count cnt;
@@ -27,9 +23,6 @@ public:
     void entryTree(Node*);
     bool canConnect(Node*, Node*);
     void snatchMobileLocate(Node*, Node*);
-    void searchRestrictedNode(Node*, Node*);
-    void searchChainOpenNode(Node*, Node*);
-    void searchExtraPatternNode(Node*, Node*);
     void showResult();
 };
 

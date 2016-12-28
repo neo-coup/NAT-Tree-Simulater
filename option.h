@@ -11,7 +11,7 @@ class Option {
     bool extend = false;    // 拡張フラグ
     bool restruct = false;  // 再構築フラグ
     int node_num = 100;     // ノード数
-    // int child_num = 2;      // ノードの持てる子ノードの数
+    int child_num = 2;      // ノードの持てる子ノードの数
 
     public:
     Option(int, char**);
