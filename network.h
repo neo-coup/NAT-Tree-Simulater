@@ -10,14 +10,6 @@ public:
     Node* node_list;
     int node_max;
 
-    struct count_restruct {
-        int r;
-        int o;
-        int e;
-    };
-
-    struct count_restruct cnt;
-
     Network(bool, bool, int);
     void init();
     void buildTree();
