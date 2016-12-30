@@ -22,7 +22,7 @@ public:
     void buildTree();
     void entryTree(Node*);
     bool canConnect(Node*, Node*);
-    void snatchMobileLocate(Node*, Node*);
+    bool snatchMobileLocate(Node*, Node*);
     void showResult();
 };
 
