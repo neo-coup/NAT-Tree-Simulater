@@ -17,10 +17,13 @@ bool Option::checkFormat() {
     regex debug("-d|--debug");
     regex ext("-e|--extend");
     // regex ch("-c");
+    regex file("nodes/nodes.[0-9].[0-9]{2}.csv");
     regex fig("\\d+");
 
     for(int i=1; i<argc; i++) {
-        if(regex_match(argv[i], help)) {
+        if(i==1 && regex_match(argv[i], file)) {
+            this->nodes_file_name = argv[i];
+        }else if(regex_match(argv[i], help)) {
             ret = true;
         } else if(regex_match(argv[i], debug)) {
             this->debug = true;
@@ -42,10 +45,14 @@ bool Option::checkFormat() {
 void Option::showHelp() {
     cout << endl;
     cout << "Usage:                 " << endl;
-    cout << "./[file name] [options]" << endl;
+    cout << "./[file name] [node file] [options]" << endl;
     cout << "                                           " << endl;
+    cout << " [node file]                               " << endl;
+    cout << " eg. ### nodes/nodes.0.00.csv ###          " << endl;
+    cout << "                                           " << endl;
+    cout << " [options]                                 " << endl;
     cout << " -h, --help                show this help  " << endl;
-    cout << " -d, --debug               show debug      " << endl;
+    cout << " -d, --debug               show progress   " << endl;
     cout << " -e, --extend              extend NAT's combinaton table" << endl;
     // cout << " -c                <num>   number of child limit" << endl;
     cout << endl;

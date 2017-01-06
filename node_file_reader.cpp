@@ -7,10 +7,10 @@
 
 using namespace std;
 
-bool NodeFileReader::read(string file_name){
+bool NodeFileReader::read(string file_name) {
 
     ifstream ifs(file_name);
-    if(!ifs){
+    if(!ifs) {
         cout << "入力エラー";
         return false;
     }

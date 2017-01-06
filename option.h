@@ -2,6 +2,7 @@
 #define __OPTION_H__
 
 #include <iostream>
+#include <string>
 
 class Option {
     private:
@@ -11,6 +12,7 @@ class Option {
     bool extend = false;    // 拡張フラグ
     int node_num = 100;   // ノード数
     // int child_num = 2;  // ノードの持てる子ノードの数
+    std::string nodes_file_name = "nodes/nodes.0.00.csv";
 
     public:
     Option(int, char**);
@@ -20,6 +22,7 @@ class Option {
     bool getExtend() { return this->extend; };
     int getNodeNum() { return this->node_num; };
     // int getChildNum() { return this->child_num };
+    std::string getNodesFileName() { return this->nodes_file_name; };
 };
 
 #endif

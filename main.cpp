@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
     }
 
     NodeFileReader nfr;
-    nfr.read("nodes/nodes.0.00.csv");
+    nfr.read(option.getNodesFileName());
     Network network(option.getDebug(), option.getExtend(), nfr.node_num);
     network.init(nfr.list);
     network.buildTree();
