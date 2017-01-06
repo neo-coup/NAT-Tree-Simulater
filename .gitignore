@@ -1,4 +1,6 @@
 main
 *.o
 *.gch
-*.csv
+
+nodes/*
+!.gitkeep
