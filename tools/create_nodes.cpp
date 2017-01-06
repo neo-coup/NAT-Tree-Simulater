@@ -14,7 +14,7 @@ int selectConnectionType();
 int main(int argc, char** argv) {
     double mobile_ratio = atoi(argv[1]);
 
-    for(int i=0; i<100; i++) {
+    for(int i=0; i<10000; i++) {
         printf("%d,%d,%d\n", i, selectConnectionType(), isMobile(mobile_ratio));
     }
 }

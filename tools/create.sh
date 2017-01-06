@@ -9,9 +9,9 @@ for i in `seq 0 9`; do
             empty=0
         fi
         ratio=$i*10
-        ./main ${ratio} >> "../nodes/nodes.${i}.${empty}${j}.csv"
+        ./create ${ratio} > "../nodes/nodes.${i}.${empty}${j}.csv"
 
-        echo -en "${i}`expr ${j} / 10` end%\r"
+        echo -en "${i}`expr ${j} / 10`% end\r"
     done
 done
 

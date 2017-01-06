@@ -2,6 +2,7 @@
 #define __NETWORK_H__
 
 #include "node.h"
+#include <vector>
 
 class Network {
 public:
@@ -11,7 +12,7 @@ public:
     int node_max;
 
     Network(bool, bool, int);
-    void init();
+    void init(std::vector<Node*>&);
     void buildTree();
     void entryTree(Node*);
     bool canConnect(Node*, Node*);
