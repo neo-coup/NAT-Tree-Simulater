@@ -13,11 +13,12 @@ Option::Option(int argc, char** argv) {
 bool Option::checkFormat() {
     bool ret = false;
 
+    regex file("nodes/nodes.[0-9].[0-9]{2}.csv");
     regex help("-h|--help");
     regex debug("-d|--debug");
     regex ext("-e|--extend");
+    regex out("-o|--output");
     // regex ch("-c");
-    regex file("nodes/nodes.[0-9].[0-9]{2}.csv");
     regex fig("\\d+");
 
     for(int i=1; i<argc; i++) {
@@ -29,6 +30,8 @@ bool Option::checkFormat() {
             this->debug = true;
         } else if(regex_match(argv[i], ext)) {
             this->extend = true;
+        } else if(regex_match(argv[i], out)) {
+            this->output = true;
         // } else if(i+1 < argc && regex_match(argv[i], ch)) {
         //     if(regex_match(argv[i+1], fig)) {
         //         this->child_num = atoi(argv[++i]);
@@ -54,6 +57,7 @@ void Option::showHelp() {
     cout << " -h, --help                show this help  " << endl;
     cout << " -d, --debug               show progress   " << endl;
     cout << " -e, --extend              extend NAT's combinaton table" << endl;
+    cout << " -o, --output              file output mode" << endl;
     // cout << " -c                <num>   number of child limit" << endl;
     cout << endl;
 };

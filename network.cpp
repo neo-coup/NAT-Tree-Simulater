@@ -1,14 +1,16 @@
 #include "network.h"
 #include "node.h"
 #include <iostream>
+#include <fstream>
 #include <stdlib.h>
 #include <queue>
 
 using namespace std;
 
-Network::Network(bool d, bool e, int n) {
+Network::Network(bool d, bool e, bool o, int n) {
     this->debug = d;
     this->extend = e;
+    this->output = o;
     this->node_max = n;
 }
 
@@ -38,6 +40,7 @@ void Network::init(vector<Node*>& list) {
 void Network::buildTree() {
     for(int i=1; i<this->node_max; i++) {
         Network::entryTree(&(node_list[i]));
+        if(this->output && (i%1000 == 999)) fileOutput(i);
     }
 
     cout << "\nTree Building has done!\n" << endl;
@@ -85,6 +88,17 @@ bool Network::canConnect(Node* c, Node* p) {
     if(c->getConnectionType() <= 3 && p->getConnectionType() <= 3 && this->extend) ret = true;
 
     return ret;
+}
+
+void Network::fileOutput(int num) {
+    ofstream result_file;
+    result_file.open(this->file_name, ios::app);
+
+    int cnt = 0;
+    for(int i=0; i<=num; i++) {
+        if(node_list[i].getConnect()) cnt++;
+    }
+    result_file << cnt << "," << num << endl;
 }
 
 void Network::showResult() {
