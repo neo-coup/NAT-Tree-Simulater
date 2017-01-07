@@ -1,3 +1,7 @@
 main
 *.o
 *.gch
+
+nodes/*
+result/*
+!.gitkeep

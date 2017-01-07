@@ -2,6 +2,8 @@
 #define __NETWORK_H__
 
 #include "node.h"
+#include "node_file_reader.h"
+#include <vector>
 
 class Network {
 public:
@@ -18,7 +20,7 @@ public:
     struct count cnt;
 
     Network(bool, bool, bool, int);
-    void init();
+    void init(std::vector<Node*>&);
     void buildTree();
     void entryTree(Node*);
     bool canConnect(Node*, Node*);

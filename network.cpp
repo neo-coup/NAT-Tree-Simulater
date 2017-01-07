@@ -10,12 +10,12 @@ using namespace std;
 Network::Network(bool d, bool e, bool r, int n) {
     this->debug = d;
     this->extend = e;
-    this->node_max = n;
     this->restruct = r;
+    this->node_max = n;
     this->cnt.s = 0;
 }
 
-void Network::init() {
+void Network::init(vector<Node*>& list) {
 
     node_list = new Node[this->node_max];
     if(node_list == NULL) return;
@@ -29,9 +29,11 @@ void Network::init() {
     node_list[0] = root;
 
     // 全ノード追加
+    // ここでは、 deep copy だが、node_listは元から vector にするべき
     for(int i=1; i<this->node_max; i++) {
         Node node;
-        node.setId(i);
+        node.setId(list[i]->getId());
+        node.setConnectionType(list[i]->getConnectionType());
         node_list[i] = node;
     }
     cout << "\nInitializing has done!\n" << endl;
