@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <typeinfo>
 
 using namespace std;
 
@@ -36,5 +37,5 @@ bool NodeFileReader::read(string file_path) {
 }
 
 bool NodeFileReader::s_to_bool(string const& s) {
-     return s == "1";
+    return s == "1";
 }
