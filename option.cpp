@@ -25,7 +25,7 @@ bool Option::checkFormat() {
     for(int i=1; i<argc; i++) {
         if(i==1 && regex_match(argv[i], nodes)) {
             this->nodes_file_name = argv[i];
-        } else if(i<2 && regex_match(argv[i], result)) {
+        } else if(i<3 && regex_match(argv[i], result)) {
             this->result_file_name = argv[i];
         } else if(regex_match(argv[i], help)) {
             ret = true;
