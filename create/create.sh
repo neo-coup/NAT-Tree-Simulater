@@ -8,7 +8,7 @@ for i in `seq 0 9`; do
         if [ $j -lt 10 ]; then
             empty=0
         fi
-        ratio=$i*10
+        ratio=`expr $i \* 10`
         ./create ${ratio} > "../nodes/nodes.${i}.${empty}${j}.csv"
 
         echo -en "${i}`expr ${j} / 10`% end\r"
