@@ -1,5 +1,6 @@
 #include "network.h"
 #include "node.h"
+#include "option.h"
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
@@ -7,10 +8,10 @@
 
 using namespace std;
 
-Network::Network(bool d, bool e, bool o, int n) {
-    this->debug = d;
-    this->extend = e;
-    this->output = o;
+Network::Network(Option& opt, int n) {
+    this->debug = opt.getDebug();
+    this->extend = opt.getExtend();
+    this->result_file_name = opt.getResultFileName();
     this->node_max = n;
 }
 
@@ -40,7 +41,7 @@ void Network::init(vector<Node*>& list) {
 void Network::buildTree() {
     for(int i=1; i<this->node_max; i++) {
         Network::entryTree(&(node_list[i]));
-        if(this->output && (i%1000 == 999)) fileOutput(i);
+        if((this->result_file_name != "") && (i%1000 == 999)) fileOutput(i);
     }
 
     cout << "\nTree Building has done!\n" << endl;
@@ -92,7 +93,7 @@ bool Network::canConnect(Node* c, Node* p) {
 
 void Network::fileOutput(int num) {
     ofstream result_file;
-    result_file.open(this->file_name, ios::app);
+    result_file.open(this->result_file_name, ios::app);
 
     int cnt = 0;
     for(int i=0; i<=num; i++) {

@@ -2,6 +2,7 @@
 #define __NETWORK_H__
 
 #include "node.h"
+#include "option.h"
 #include <vector>
 #include <string>
 
@@ -9,12 +10,11 @@ class Network {
 public:
     bool debug;
     bool extend;
-    bool output;
     Node* node_list;
     int node_max;
-    std::string file_name = "result/result.txt";
+    std::string result_file_name;
 
-    Network(bool, bool, bool, int);
+    Network(Option&, int);
     void init(std::vector<Node*>&);
     void buildTree();
     void entryTree(Node*);

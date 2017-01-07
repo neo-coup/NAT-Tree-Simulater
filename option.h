@@ -10,10 +10,11 @@ class Option {
     char** argv;
     bool debug = false;
     bool extend = false;    // 拡張フラグ
-    bool output = false;     // ファイル出力フラグ
-    int node_num = 100;   // ノード数
-    // int child_num = 2;  // ノードの持てる子ノードの数
+    bool output = false;    // ファイル出力フラグ
+    int node_num = 100;     // ノード数
+    // int child_num = 2;      // ノードの持てる子ノードの数
     std::string nodes_file_name = "nodes/nodes.0.00.csv";
+    std::string result_file_name = "";
 
     public:
     Option(int, char**);
@@ -25,6 +26,7 @@ class Option {
     int getNodeNum() { return this->node_num; };
     // int getChildNum() { return this->child_num };
     std::string getNodesFileName() { return this->nodes_file_name; };
+    std::string getResultFileName() { return this->result_file_name; };
 };
 
 #endif

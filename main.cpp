@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
 
     NodeFileReader nfr;
     nfr.read(option.getNodesFileName());
-    Network network(option.getDebug(), option.getExtend(), option.getOutput(), nfr.node_num);
+    Network network(option, nfr.node_num);
     network.init(nfr.list);
     network.buildTree();
     network.showResult();
