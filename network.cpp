@@ -168,7 +168,7 @@ void Network::showResult() {
     for(int i=0; i<this->node_max; i++) {
         if(this->debug) {
             if(node_list[i].parent != NULL ) printf("I'm %5d.     My type is %d. And mobile is %d    My parent is %5d\n", node_list[i].getId(), node_list[i].getConnectionType(), node_list[i].getMobile(), node_list[i].parent->getId());
-            else  printf("I'm %5d.     My type is %d. And mobile is %d     I have no parent.\n", node_list[i].getId(), node_list[i].getConnectionType(), node_list[i].getMobile());
+            else printf("I'm %5d.     My type is %d. And mobile is %d     I have no parent.\n", node_list[i].getId(), node_list[i].getConnectionType(), node_list[i].getMobile());
         }
         if(node_list[i].getConnect()) {
             cnt++;
