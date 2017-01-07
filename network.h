@@ -3,6 +3,7 @@
 
 #include "node.h"
 #include "node_file_reader.h"
+#include "option.h"
 #include <vector>
 #include <string>
 
@@ -11,10 +12,9 @@ public:
     bool debug;
     bool extend;
     bool restruct;
-    bool output;
     Node* node_list;
     int node_max;
-    std::string file_name = "result/result.txt";
+    std::string result_file_name;
 
     struct count {
         int s;  // snatchMobileLocate
@@ -22,7 +22,7 @@ public:
 
     struct count cnt;
 
-    Network(bool, bool, bool, bool, int);
+    Network(Option&, int);
     void init(std::vector<Node*>&);
     void buildTree();
     void entryTree(Node*);
