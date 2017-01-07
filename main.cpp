@@ -1,5 +1,7 @@
 #include "option.h"
+#include "node_file_reader.h"
 #include "network.h"
+#include <vector>
 
 int main(int argc, char** argv) {
     Option option(argc, argv);
@@ -8,8 +10,10 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    Network network(option.getDebug(), option.getExtend(), option.getRestruct(), option.getNodeNum());
-    network.init();
+    NodeFileReader nfr;
+    nfr.read(option.getNodesFileName());
+    Network network(option.getDebug(), option.getExtend(), option.getRestruct(), option.getOutput(), nfr.node_num);
+    network.init(nfr.list);
     network.buildTree();
     network.showResult();
     return 1;

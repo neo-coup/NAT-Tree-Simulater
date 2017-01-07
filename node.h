@@ -1,18 +1,9 @@
 #ifndef __NODE_H__
-#define  __NODE_H__
+#define __NODE_H__
 
 #define CHILDREN_MAX 2
 
-const double TYPE_0 = 12.5;   // Open Internet
-const double TYPE_1 = 12.5;   // Full cone NAT
-const double TYPE_2 = 5.0;    // Restricted cone NAT
-const double TYPE_3 = 40.0;   // Port Restricted cone NAT
-const double TYPE_4 = 16.0;   // Symmetric NAT
-const double TYPE_5 = 14.0;   // UDP Blocked
-const double MOBILE_RATIO = 40.0;   // Mobile
-
-class Node
-{
+class Node {
  private:
      int id;
      bool connect;
@@ -35,8 +26,6 @@ class Node
      void setLocate(int locate) { this->locate = locate; };
      bool getMobile() { return this->mobile; };
      void setMobile(bool mobile) { this->mobile = mobile; };
-     int selectConnectionType();
-     bool setIsMobile();
 };
 
 #endif

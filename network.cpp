@@ -2,20 +2,22 @@
 #include "node.h"
 #include "utility.h"
 #include <iostream>
+#include <fstream>
 #include <stdlib.h>
 #include <queue>
 
 using namespace std;
 
-Network::Network(bool d, bool e, bool r, int n) {
+Network::Network(bool d, bool e, bool r, bool o, int n) {
     this->debug = d;
     this->extend = e;
-    this->node_max = n;
     this->restruct = r;
+    this->output = o;
+    this->node_max = n;
     this->cnt.s = 0;
 }
 
-void Network::init() {
+void Network::init(vector<Node*>& list) {
 
     node_list = new Node[this->node_max];
     if(node_list == NULL) return;
@@ -29,9 +31,12 @@ void Network::init() {
     node_list[0] = root;
 
     // 全ノード追加
+    // ここでは、 deep copy だが、node_listは元から vector にするべき
     for(int i=1; i<this->node_max; i++) {
         Node node;
-        node.setId(i);
+        node.setId(list[i]->getId());
+        node.setConnectionType(list[i]->getConnectionType());
+        node.setMobile(list[i]->getMobile());
         node_list[i] = node;
     }
     cout << "\nInitializing has done!\n" << endl;
@@ -40,6 +45,7 @@ void Network::init() {
 void Network::buildTree() {
     for(int i=1; i<this->node_max; i++) {
         Network::entryTree(&(node_list[i]));
+        if(this->output && (i%1000 == 999)) fileOutput(i);
     }
 
     cout << "\nTree Building has done!\n" << endl;
@@ -132,6 +138,26 @@ bool Network::snatchMobileLocate(Node* v, Node* d) {
         }
     }
     return ret;
+}
+
+void Network::fileOutput(int num) {
+    ofstream result_file;
+    result_file.open(this->file_name, ios::app);
+
+    int cnt = 0;
+    int hops = 0;
+
+    for(int i=0; i<=num; i++) {
+        if(node_list[i].getConnect()) {
+            cnt++;
+            hops += getNodeHeight(&node_list[i]);
+        }
+    }
+
+    double hop_avg = (double)hops / cnt;
+    double b_hop_avg = getBalancedTreeHops(cnt);
+
+    result_file << cnt << "," << num << "," << hop_avg << "," << b_hop_avg << endl;
 }
 
 void Network::showResult() {
