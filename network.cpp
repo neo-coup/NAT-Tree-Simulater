@@ -34,6 +34,7 @@ void Network::init(vector<Node*>& list) {
         Node node;
         node.setId(list[i]->getId());
         node.setConnectionType(list[i]->getConnectionType());
+        node.setMobile(list[i]->getMobile());
         node_list[i] = node;
     }
     cout << "\nInitializing has done!\n" << endl;
