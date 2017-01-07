@@ -10,7 +10,7 @@ for i in `seq 0 9`; do
         fi
         ratio=`expr $i \* 10`
         ./main "nodes/nodes.${i}.${empty}${j}.csv" "result/result.${i}.${empty}${j}.csv" > /dev/null
-        echo -en "${i}`expr ${j} / 10`% end\r"
+        echo -en "${i}`expr ${j} / 10`.`expr ${j} % 10`% end\r"
     done
 done
 
