@@ -3,3 +3,5 @@ build:
 	g++ -Wall -std=c++11 ${TARGET} -o main
 clean:
 	rm -f *.o *.gch main
+allclean:
+	rm -f *.o *.gch main result/result.* avg/avg.csv
