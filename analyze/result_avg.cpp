@@ -47,8 +47,10 @@ int main(int argc, char** argv) {
             getline(stream, tree_depth_temp, ',');
             getline(stream, b_tree_depth_temp, ',');
 
+            double depth_indicater = stod(tree_depth_temp) / stod(b_tree_depth_temp);
+
             node_val.push_back(stoi(node_num));
-            tree_depth.push_back(stod(tree_depth_temp));
+            tree_depth.push_back(depth_indicater);
         }
         node_val_list.push_back(node_val);
         tree_depth_list.push_back(tree_depth);
