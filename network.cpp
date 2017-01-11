@@ -54,9 +54,6 @@ void Network::buildTree() {
 
 void Network::entryTree(Node* v) {
 
-    // 第一にモバイルノードを探索
-    if(this->restruct && snatchMobileLocate(v, &(node_list[0]))) {
-    } else {
         queue<Node*> queue;
 
         // root ノードを queue に追加
@@ -79,12 +76,13 @@ void Network::entryTree(Node* v) {
                         if(this->debug) printf("I'm %5d.     My Type is %d. And mobile is %d    My parent's ID is %5d.     The location is %d.\n", v->getId(), v->getConnectionType(), v->getMobile(), p->getId(), i);
                         return;
                     }
+                } else if(this->restruct && p->children[i]->getMobile()){
+                    if(snatchMobileLocate(v, p->children[i])) return;
                 } else {
                     queue.push(p->children[i]);
                 }
             }
         }
-    }
 
     if(this->debug) if(!v->getConnect()) printf("%d failed to join.\n", v->getId());
 }
