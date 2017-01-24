@@ -1,5 +1,6 @@
 #include "network.h"
 #include "node.h"
+#include "utility.h"
 #include "option.h"
 #include <iostream>
 #include <fstream>
@@ -96,24 +97,41 @@ void Network::fileOutput(int num) {
     result_file.open(this->result_file_name, ios::app);
 
     int cnt = 0;
+    int hops = 0;
+
     for(int i=0; i<=num; i++) {
-        if(node_list[i].getConnect()) cnt++;
+        if(node_list[i].getConnect()) {
+            cnt++;
+            hops += getNodeHeight(&node_list[i]);
+        }
     }
-    result_file << cnt << "," << num << endl;
+
+    double hop_avg = (double)hops / cnt;
+    double b_hop_avg = getBalancedTreeHops(cnt);
+
+    result_file << cnt << "," << num << "," << hop_avg << "," << b_hop_avg << endl;
 }
 
 void Network::showResult() {
     int cnt = 0;
+    int hops = 0;
 
     for(int i=0; i<this->node_max; i++) {
         if(this->debug) {
-            if(node_list[i].parent != NULL ) printf("I'm %5d.     My type is %d.     My parent is %5d\n", node_list[i].getId(), node_list[i].getConnectionType(), node_list[i].parent->getId());
-            else  printf("I'm %5d.     My type is %d.     I have no parent.\n", node_list[i].getId(), node_list[i].getConnectionType());
+            if(node_list[i].parent != NULL ) printf("I'm %5d.     My type is %d.    My parent is %5d\n", node_list[i].getId(), node_list[i].getConnectionType(), node_list[i].parent->getId());
+            else printf("I'm %5d.     My type is %d.     I have no parent.\n", node_list[i].getId(), node_list[i].getConnectionType());
         }
-        if(node_list[i].getConnect()) cnt++;
+        if(node_list[i].getConnect()) {
+            cnt++;
+            hops += getNodeHeight(&node_list[i]);
+        }
     }
+
+    double hop_avg = (double)hops / cnt;
+    double b_hop_avg = getBalancedTreeHops(cnt);
 
     free(node_list);
     cout << cnt << " of " << this->node_max << " nodes joined in the Tree." << endl;
+    printf("\nHop T : B     %f : %f\n", hop_avg , b_hop_avg );
     if(cnt == this->node_max) cout << "perfect !!!111" << endl;
 }
