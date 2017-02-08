@@ -8,21 +8,17 @@ const double TYPE_3 = 40.0;   // Port Restricted cone NAT
 const double TYPE_4 = 16.0;   // Symmetric NAT
 const double TYPE_5 = 14.0;   // UDP Blocked
 
-int isMobile(double);
 int selectConnectionType();
+int isMobile(double, int);
 
 int main(int argc, char** argv) {
     double mobile_ratio = atoi(argv[1]);
 
     for(int i=0; i<10000; i++) {
-        printf("%d,%d,%d\n", i, selectConnectionType(), isMobile(mobile_ratio));
+        int type = selectConnectionType();
+        int mobile = isMobile(mobile_ratio, type);
+        printf("%d,%d,%d\n", i, type, mobile);
     }
-}
-
-int isMobile(double n) {
-
-    std::random_device rnd;
-    return (int)(rnd() % 100 < n);
 }
 
 int selectConnectionType() {
@@ -45,3 +41,13 @@ int selectConnectionType() {
     // n -= TYPE_5;
     return 0;
 };
+
+int isMobile(double n, int type) {
+    bool ret = false;
+
+    std::random_device rnd;
+    ret = (rnd() % 100) < n;
+
+
+    return (int)ret;
+}

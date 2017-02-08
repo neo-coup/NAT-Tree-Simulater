@@ -12,8 +12,12 @@ using namespace std;
 Network::Network(Option& opt, int n) {
     this->debug = opt.getDebug();
     this->extend = opt.getExtend();
+    this->mobile = opt.getMobile();
+    this->rEmpty = opt.getEmpty();
+    this->rShallow = opt.getShallow();
     this->result_file_name = opt.getResultFileName();
     this->node_max = n;
+    this->cnt.s = 0;
 }
 
 void Network::init(vector<Node*>& list) {
@@ -25,6 +29,7 @@ void Network::init(vector<Node*>& list) {
     Node root;
     root.setId(0);
     root.setConnectionType(0);
+    root.setMobile(false);
     root.setConnect(true);
     node_list[0] = root;
 
@@ -34,6 +39,7 @@ void Network::init(vector<Node*>& list) {
         Node node;
         node.setId(list[i]->getId());
         node.setConnectionType(list[i]->getConnectionType());
+        node.setMobile(list[i]->getMobile());
         node_list[i] = node;
     }
     cout << "\nInitializing has done!\n" << endl;
@@ -49,32 +55,38 @@ void Network::buildTree() {
 }
 
 void Network::entryTree(Node* v) {
-    queue<Node*> queue;
 
-    // root ノードを queue に追加
-    Node* root = &(node_list[0]);
-    queue.push(root);
+        queue<Node*> queue;
 
-    // 幅優先探索で参加先を決定
-    while( !queue.empty() ) {
-        Node* p = queue.front();
-        queue.pop();
-        for(int i=0; i<CHILDREN_MAX; i++) {
-            // 子ノードの接続先がある場合
-            if(p->children[i] == NULL) {
-                // 接続可能な相性な場合
-                if(canConnect(v, p)) {
-                    p->children[i] = v;
-                    v->parent = p;
-                    v->setConnect(true);
-                    if(this->debug) printf("I'm %5d.     My Type is %d.     My parent's ID is %5d.     The location is %d.\n", v->getId(), v->getConnectionType(), p->getId(), i);
-                    return;
+        // root ノードを queue に追加
+        Node* root = &(node_list[0]);
+        queue.push(root);
+
+        // 幅優先探索で参加先を決定
+        while( !queue.empty() ) {
+            Node* p = queue.front();
+            queue.pop();
+            for(int i=0; i<CHILDREN_MAX; i++) {
+                // 子ノードの接続先がある場合
+                if(p->children[i] == NULL) {
+                    // 接続可能な相性な場合
+                    if(canConnect(v, p)) {
+                        p->children[i] = v;
+                        v->parent = p;
+                        v->setLocate(i);
+                        v->setConnect(true);
+                        if(this->debug) printf("I'm %5d.     My Type is %d. And mobile is %d    My parent's ID is %5d.     The location is %d.\n", v->getId(), v->getConnectionType(), v->getMobile(), p->getId(), i);
+                        return;
+                    }
+                } else if(this->rShallow && p->children[i]->getMobile()){
+                    if(snatchMobileLocate(v, p->children[i])) return;
+                } else {
+                    queue.push(p->children[i]);
                 }
-            } else {
-                queue.push(p->children[i]);
             }
         }
-    }
+    if(this->rEmpty) snatchMobileLocate(v, &(node_list[0]));
+
     if(this->debug) if(!v->getConnect()) printf("%d failed to join.\n", v->getId());
 }
 
@@ -86,9 +98,47 @@ void Network::entryTree(Node* v) {
 
 bool Network::canConnect(Node* c, Node* p) {
     bool ret = false;
-    if(c->getConnectionType() <= 1 || p->getConnectionType() <= 1) ret = true;
-    if(c->getConnectionType() <= 3 && p->getConnectionType() <= 3 && this->extend) ret = true;
 
+    if(p->getMobile()) ret = false;
+    else if(c->getConnectionType() <= 1 || p->getConnectionType() <= 1) ret = true;
+    else if(c->getConnectionType() <= 3 && p->getConnectionType() <= 3 && this->extend) ret = true;
+
+    return ret;
+}
+
+bool Network::snatchMobileLocate(Node* v, Node* d) {
+    bool ret = false;
+    // 再帰処理の為、見つかっていた場合ここで処理終了
+    if(v->getConnect()) return ret;
+
+    // 参加者が Mobile 又は、交換先が不参加なら検索終了
+    if(v->getMobile() || !d->getConnect()) return ret;
+
+    // 交換先が Mobile 且つ、交換先の親ノードと接続可能
+    if(d->getMobile() &&  canConnect(v, d->parent)) {
+        if(this->debug) printf("Detect Snatch   >>> v:%5d     d:%5d\n", v->getId(), d->getId());
+        Node* p = d->parent;
+
+        p->children[d->getLocate()] = v;
+        v->parent = p;
+        // for(int i=0; i<CHILDREN_MAX; i++) v->children[i] = d->children[i];
+        v->setLocate(d->getLocate());
+        v->setConnect(true);
+        d->setConnect(false);
+        this->cnt.s++;
+
+        ret = true;
+
+        // 追加先再検索
+        entryTree(d);
+    } else {
+        for(int i=0; i<CHILDREN_MAX; i++) {
+            if(d->children[i] != NULL) {
+                ret = snatchMobileLocate(v, d->children[i]);
+                if(ret) break;
+            }
+        }
+    }
     return ret;
 }
 
@@ -118,8 +168,8 @@ void Network::showResult() {
 
     for(int i=0; i<this->node_max; i++) {
         if(this->debug) {
-            if(node_list[i].parent != NULL ) printf("I'm %5d.     My type is %d.    My parent is %5d\n", node_list[i].getId(), node_list[i].getConnectionType(), node_list[i].parent->getId());
-            else printf("I'm %5d.     My type is %d.     I have no parent.\n", node_list[i].getId(), node_list[i].getConnectionType());
+            if(node_list[i].parent != NULL ) printf("I'm %5d.     My type is %d. And mobile is %d    My parent is %5d\n", node_list[i].getId(), node_list[i].getConnectionType(), node_list[i].getMobile(), node_list[i].parent->getId());
+            else printf("I'm %5d.     My type is %d. And mobile is %d     I have no parent.\n", node_list[i].getId(), node_list[i].getConnectionType(), node_list[i].getMobile());
         }
         if(node_list[i].getConnect()) {
             cnt++;
@@ -131,6 +181,7 @@ void Network::showResult() {
     double b_hop_avg = getBalancedTreeHops(cnt);
 
     free(node_list);
+    if(this->mobile) cout << "\nRESTRUCTION >>>  S:" << this->cnt.s << endl;
     cout << cnt << " of " << this->node_max << " nodes joined in the Tree." << endl;
     printf("\nHop T : B     %f : %f\n", hop_avg , b_hop_avg );
     if(cnt == this->node_max) cout << "perfect !!!111" << endl;

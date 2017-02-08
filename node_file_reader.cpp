@@ -4,14 +4,15 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <typeinfo>
 
 using namespace std;
 
-bool NodeFileReader::read(string file_name) {
+bool NodeFileReader::read(string file_path) {
 
-    ifstream ifs(file_name);
+    ifstream ifs(file_path);
     if(!ifs) {
-        cout << "入力エラー";
+        cout << "input error";
         return false;
     }
 
@@ -27,9 +28,14 @@ bool NodeFileReader::read(string file_name) {
         Node* n = new Node();
         n->setId(stoi(i));
         n->setConnectionType(stoi(t));
+        n->setMobile(s_to_bool(m));
 
         this->list.push_back(n);
         this->node_num++;
     }
     return true;
+}
+
+bool NodeFileReader::s_to_bool(string const& s) {
+    return s == "1";
 }

@@ -1,6 +1,7 @@
 #!/bin/sh
 
 echo "start"
+rm ../nodes/nodes.*
 
 for i in `seq 0 9`; do
     for j in `seq 0 99`; do

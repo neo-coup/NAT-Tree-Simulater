@@ -8,6 +8,7 @@
 class NodeFileReader {
 public:
     bool read(std::string);
+    bool s_to_bool(const std::string&);
     std::vector<Node*> list;
     int node_num = 0;
 };

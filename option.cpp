@@ -18,6 +18,9 @@ bool Option::checkFormat() {
     regex help("-h|--help");
     regex debug("-d|--debug");
     regex ext("-e|--extend");
+    regex mobile("-m|--mobile");
+    regex empty("-pe|--pEmpty");
+    regex shallow("-ps|--pShallow");
     // regex ch("-c");
     regex fig("\\d+");
 
@@ -32,6 +35,14 @@ bool Option::checkFormat() {
             this->debug = true;
         } else if(regex_match(argv[i], ext)) {
             this->extend = true;
+        } else if(regex_match(argv[i], mobile)) {
+            this->mobile = true;
+        } else if(regex_match(argv[i], empty)) {
+            this->empty = true;
+            if(this->shallow) ret = true;
+        } else if(regex_match(argv[i], shallow)) {
+            this->shallow = true;
+            if(this->empty) ret = true;
         // } else if(i+1 < argc && regex_match(argv[i], ch)) {
         //     if(regex_match(argv[i+1], fig)) {
         //         this->child_num = atoi(argv[++i]);
@@ -62,6 +73,9 @@ void Option::showHelp() {
     cout << " -h, --help                show this help  " << endl;
     cout << " -d, --debug               show progress   " << endl;
     cout << " -e, --extend              extend NAT's combinaton table" << endl;
+    cout << " -m, --mobile              mobile appears  " << endl;
+    cout << " -pe, --pEmpty             pe restruct     " << endl;
+    cout << " -ps, --pShallow           ps restruct     " << endl;
     // cout << " -c                <num>   number of child limit" << endl;
     cout << endl;
 };
